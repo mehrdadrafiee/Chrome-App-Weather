@@ -7,16 +7,10 @@ angular.module('myApp', [])
     if(key) this.apiKey = key;
   };
 
-  this.$get = function($http) {
-    return {
-      //Service object
-    }
-  };
-
   this.getUrl = function(type, ext) {
-    return "http://api.wunderground.com/api" +
-      this.apiKey + "/" + type + "/q/" +
-      ext + '.json';
+    return "http://api.wunderground.com/api/" +
+    this.apiKey + "/" + type + "/q/" +
+    ext + '.json';
   };
 
   this.$get = function($q, $http) {
@@ -60,7 +54,7 @@ angular.module('myApp', [])
   //Kick off the update function
   updateTime();
 
-  Weather.getWeatherForecast("CA/San_Francisco")
+  Weather.getWeatherForecast("CA/Fullerton")
   .then(function(data) {
     $scope.weather.forecast = data;
   });
