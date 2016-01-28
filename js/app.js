@@ -35,6 +35,31 @@ angular.module('myApp', ['ngRoute'])
   }
 })
 
+.factory('UserService', function() {
+  var defaults = {
+    location: 'autoip'
+  };
+
+  var service = {
+    user: {},
+    save: function() {
+      sessionStorage.presently =
+        angular.toJson(service.user);
+    },
+    restore: function() {
+      //Pull from sessionStorage
+      service.user =
+        angular.fromJson(sessionStorage.presently) || defaults
+
+      return service.user;
+    }
+  };
+  //Immediately call restore from the session sessionStorage
+  //so we have our user data available Immediately
+  service.restore();
+  return service;
+})
+
 .config(function($routeProvider) {
   $routeProvider
     .when('/', {
@@ -71,4 +96,9 @@ angular.module('myApp', ['ngRoute'])
   .then(function(data) {
     $scope.weather.forecast = data;
   });
+})
+
+.controller('SettingsCtrl',
+  function($scope, UserService) {
+    $scope.user = UserService.user;
 });
