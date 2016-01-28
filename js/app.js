@@ -30,6 +30,20 @@ angular.module('myApp', ['ngRoute'])
           d.reject(err);
         });
         return d.promise;
+      },
+      getCityDetails: function(query) {
+        var d = $q.defer();
+        $http({
+          method: 'GET',
+          url: "http://autocomplete.wunderground.com/" +
+                "aq?query=" +
+                query
+        }).success(function(data) {
+          d.resolve(data.RESULTS);
+        }).error(function(err) {
+          d.reject(err);
+        });
+        return d.promise;
       }
     }
   }
@@ -100,12 +114,14 @@ angular.module('myApp', ['ngRoute'])
 })
 
 .controller('SettingsCtrl',
-  function($scope, UserService) {
+  function($scope, UserService, Weather) {
     $scope.user = UserService.user;
 
     $scope.save = function() {
       UserService.save();
     }
+
+    $scope.fetchCities = Weather.getCityDetails;
 })
 
 .directive('autoFill', function($timeout) {
@@ -131,7 +147,29 @@ angular.module('myApp', ['ngRoute'])
 
       return function(scope, ele, attrs, ctrl) {
         //Our link function
-        
+        var minKeyCount = attrs.minKeyCount || 3,
+            timer,
+            input = ele.find('input');
+
+        input.bind('keyup', function(e) {
+          val = ele.val();
+          if(val.length < minKeyCount) {
+            if(timer) $timeout.cancel(timer);
+            scope.reslist = null;
+            return;
+          } else {
+            if (timer) $timeout.cancel(timer);
+            timer = $timeout(function() {
+              scope.autoFill()(val)
+              .then(function(data) {
+                if (data && data.length > 0) {
+                  scope.reslist = data;
+                  scope.ngModel = data[0].amw;
+                }
+              });
+            }, 300);
+          }
+        })
       }
     }
   }
