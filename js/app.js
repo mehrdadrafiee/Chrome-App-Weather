@@ -78,11 +78,12 @@ angular.module('myApp', ['ngRoute'])
 })
 
 .controller('MainCtrl',
-  function($scope, $timeout, Weather) {
+  function($scope, $timeout, Weather, UserService) {
 
   //Build the date object
   $scope.weather = {};
   $scope.date = {};
+  $scope.user = UserService.user;
 
   //Update function
   var updateTime = function() {
@@ -92,7 +93,7 @@ angular.module('myApp', ['ngRoute'])
   //Kick off the update function
   updateTime();
 
-  Weather.getWeatherForecast("CA/Fullerton")
+  Weather.getWeatherForecast($scope.user.location)
   .then(function(data) {
     $scope.weather.forecast = data;
   });
@@ -101,4 +102,8 @@ angular.module('myApp', ['ngRoute'])
 .controller('SettingsCtrl',
   function($scope, UserService) {
     $scope.user = UserService.user;
+
+    $scope.save = function() {
+      UserService.save();
+    }
 });
