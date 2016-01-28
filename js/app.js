@@ -106,4 +106,33 @@ angular.module('myApp', ['ngRoute'])
     $scope.save = function() {
       UserService.save();
     }
-});
+})
+
+.directive('autoFill', function($timeout) {
+  return {
+    restrict: 'EA',
+    scope: {
+      autoFill: '&',
+      ngModel: '='
+    },
+    compile: function(tEle, tAttrs) {
+      //Our compile function
+      var tplEl = angular.element('<div class="Typeahead">' +
+      '<input type="text" autocomplete="off" />' +
+      '<ul id="autolist" ng-show="reslist">' +
+        '<li ng-repeat="res in reslist" ' +
+          '>{{res.name}}</li>' +
+      '</ul>' +
+      '</div>');
+      var input = tplEl.find('input');
+      input.attr('type', tAttrs.type);
+      input.attr('ng-model', tAttrs.ngModel);
+      tEle.replaceWith(tplEl);
+
+      return function(scope, ele, attrs, ctrl) {
+        //Our link function
+        
+      }
+    }
+  }
+})
