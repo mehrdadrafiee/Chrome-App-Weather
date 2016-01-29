@@ -1,16 +1,15 @@
 angular.module('myApp', ['ngRoute'])
-
-.provider("Weather", function() {
+.provider('Weather', function() {
   var apiKey = "";
-
-  this.setApiKey = function(key) {
-    if(key) this.apiKey = key;
-  };
 
   this.getUrl = function(type, ext) {
     return "http://api.wunderground.com/api/" +
-    this.apiKey + "/" + type + "/q/" +
-    ext + '.json';
+      this.apiKey + "/" + type + "/q/" +
+      ext + '.json';
+  };
+
+  this.setApiKey = function(key) {
+    if (key) this.apiKey = key;
   };
 
   this.$get = function($q, $http) {
@@ -33,7 +32,8 @@ angular.module('myApp', ['ngRoute'])
         var d = $q.defer();
         $http({
           method: 'GET',
-          url: "http://autocomplete.wunderground.com/aq?query=" + query
+          url: "http://autocomplete.wunderground.com/aq?query=" +
+                query
         }).success(function(data) {
           d.resolve(data.RESULTS);
         }).error(function(err) {
@@ -44,7 +44,6 @@ angular.module('myApp', ['ngRoute'])
     }
   }
 })
-
 .factory('UserService', function() {
   var defaults = {
     location: 'autoip'
@@ -57,20 +56,19 @@ angular.module('myApp', ['ngRoute'])
         angular.toJson(service.user);
     },
     restore: function() {
-      //Pull from sessionStorage
       service.user =
         angular.fromJson(sessionStorage.presently) || defaults
 
       return service.user;
     }
   };
-  //Immediately call restore from the session sessionStorage
-  //so we have our user data available Immediately
   service.restore();
   return service;
 })
-
-.config(function($routeProvider) {
+.config(function(WeatherProvider) {
+  WeatherProvider.setApiKey('2a4c7304176bded1');
+})
+.config(['$routeProvider', function($routeProvider) {
   $routeProvider
     .when('/', {
       templateUrl: 'templates/home.html',
@@ -81,53 +79,17 @@ angular.module('myApp', ['ngRoute'])
       controller: 'SettingsCtrl'
     })
     .otherwise({redirectTo: '/'});
-})
-
-.config(function(WeatherProvider) {
-  WeatherProvider.setApiKey('2a4c7304176bded1');
-})
-
-.controller('MainCtrl',
-  function($scope, $timeout, Weather, UserService) {
-
-  //Build the date object
-  $scope.weather = {};
-  $scope.date = {};
-  $scope.user = UserService.user;
-
-  //Update function
-  var updateTime = function() {
-    $scope.date.raw = new Date();
-    $timeout(updateTime, 1000);
-  }
-  //Kick off the update function
-  updateTime();
-
-  Weather.getWeatherForecast($scope.user.location)
-  .then(function(data) {
-    $scope.weather.forecast = data;
-  });
-})
-
-.controller('SettingsCtrl',
-  function($scope, UserService, Weather) {
-    $scope.user = UserService.user;
-    $scope.save = function() {
-      UserService.save();
-    }
-    $scope.fetchCities = Weather.getCityDetails;
-})
-
-.directive('autoFill', function($timeout) {
+}])
+.directive('autoFill', function($timeout, Weather) {
   return {
     restrict: 'EA',
     scope: {
       autoFill: '&',
-      ngModel: '='
+      ngModel: '=',
+      timezone: '='
     },
     compile: function(tEle, tAttrs) {
-      //Our compile function
-      var tplEl = angular.element('<div class="Typeahead">' +
+      var tplEl = angular.element('<div class="typeahead">' +
       '<input type="text" autocomplete="off" />' +
       '<ul id="autolist" ng-show="reslist">' +
         '<li ng-repeat="res in reslist" ' +
@@ -139,17 +101,14 @@ angular.module('myApp', ['ngRoute'])
       input.attr('ng-model', tAttrs.ngModel);
       input.attr('timezone', tAttrs.timezone);
       tEle.replaceWith(tplEl);
-
       return function(scope, ele, attrs, ctrl) {
-        //Our link function
         var minKeyCount = attrs.minKeyCount || 3,
-            timer,
-            input = ele.find('input');
+            timer;
 
-        input.bind('keyup', function(e) {
+        ele.bind('keyup', function(e) {
           val = ele.val();
-          if(val.length < minKeyCount) {
-            if(timer) $timeout.cancel(timer);
+          if (val.length < minKeyCount) {
+            if (timer) $timeout.cancel(timer);
             scope.reslist = null;
             return;
           } else {
@@ -166,7 +125,8 @@ angular.module('myApp', ['ngRoute'])
             }, 300);
           }
         });
-        //Hide the reslist on blur
+
+        // Hide the reslist on blur
         input.bind('blur', function(e) {
           scope.reslist = null;
           scope.$digest();
@@ -175,3 +135,31 @@ angular.module('myApp', ['ngRoute'])
     }
   }
 })
+.controller('MainCtrl',
+  function($scope, $timeout, Weather, UserService) {
+    $scope.date = {};
+
+    var updateTime = function() {
+      $scope.date.tz = new Date(new Date()
+        .toLocaleString("en-US", {timeZone: $scope.user.timezone}));
+      $timeout(updateTime, 1000);
+    }
+
+    $scope.weather = {}
+    $scope.user = UserService.user;
+    Weather.getWeatherForecast($scope.user.location)
+    .then(function(data) {
+      $scope.weather.forecast = data;
+    });
+    updateTime();
+})
+.controller('SettingsCtrl',
+  function($scope, $location, Weather, UserService) {
+    $scope.user = UserService.user;
+
+    $scope.save = function() {
+      UserService.save();
+      $location.path('/');
+    }
+    $scope.fetchCities = Weather.getCityDetails;
+});
