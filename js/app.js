@@ -22,11 +22,9 @@ angular.module('myApp', ['ngRoute'])
           method: 'GET',
           url: self.getUrl("forecast", city),
           cache: true
-        })
-        .success(function(data) {
+        }).success(function(data) {
           d.resolve(data.forecast.simpleforecast);
-        })
-        .error(function(err) {
+        }).error(function(err) {
           d.reject(err);
         });
         return d.promise;
@@ -35,9 +33,7 @@ angular.module('myApp', ['ngRoute'])
         var d = $q.defer();
         $http({
           method: 'GET',
-          url: "http://autocomplete.wunderground.com/" +
-                "aq?query=" +
-                query
+          url: "http://autocomplete.wunderground.com/aq?query=" + query
         }).success(function(data) {
           d.resolve(data.RESULTS);
         }).error(function(err) {
@@ -116,11 +112,9 @@ angular.module('myApp', ['ngRoute'])
 .controller('SettingsCtrl',
   function($scope, UserService, Weather) {
     $scope.user = UserService.user;
-
     $scope.save = function() {
       UserService.save();
     }
-
     $scope.fetchCities = Weather.getCityDetails;
 })
 
@@ -143,6 +137,7 @@ angular.module('myApp', ['ngRoute'])
       var input = tplEl.find('input');
       input.attr('type', tAttrs.type);
       input.attr('ng-model', tAttrs.ngModel);
+      input.attr('timezone', tAttrs.timezone);
       tEle.replaceWith(tplEl);
 
       return function(scope, ele, attrs, ctrl) {
@@ -164,12 +159,18 @@ angular.module('myApp', ['ngRoute'])
               .then(function(data) {
                 if (data && data.length > 0) {
                   scope.reslist = data;
-                  scope.ngModel = data[0].amw;
+                  scope.ngModel = data[0].zmw;
+                  scope.timezone = data[0].tz;
                 }
               });
             }, 300);
           }
-        })
+        });
+        //Hide the reslist on blur
+        input.bind('blur', function(e) {
+          scope.reslist = null;
+          scope.$digest();
+        });
       }
     }
   }
