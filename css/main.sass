@@ -2,11 +2,20 @@
 
 $font-stack: Ubuntu
 $bg-color: rgba(0, 0, 0, 0.1)
+$bg: "../../img/bg.png"
 
 html, body
   height: 100%
-  background-color: $bg-color
   font: 100% $font-stack
+  color: rgba(255, 255, 255, 0.8)
+  
+  #mainContainer
+    height: 100%
+    background:
+      image: url($bg)
+      size: cover
+      position: center
+  filter: blur(50px)
 
 .clock
   text-align: center
@@ -33,4 +42,4 @@ html, body
   right: 1.0em
   a
     font-size: 2.2rem
-    color: #000
+    color: rgba(255, 255, 255, 0.3)

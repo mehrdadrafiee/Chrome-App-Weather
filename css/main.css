@@ -1,8 +1,14 @@
 @import url(https://fonts.googleapis.com/css?family=Ubuntu:500,700,400);
 html, body {
   height: 100%;
-  background-color: rgba(0, 0, 0, 0.1);
-  font: 100% Ubuntu; }
+  font: 100% Ubuntu;
+  color: rgba(255, 255, 255, 0.8);
+  filter: blur(50px); }
+  html #mainContainer, body #mainContainer {
+    height: 100%;
+    background-image: url("../../img/bg.png");
+    background-size: cover;
+    background-position: center; }
 
 .clock {
   text-align: center;
@@ -29,6 +35,6 @@ html, body {
   right: 1em; }
   #actionbar a {
     font-size: 2.2rem;
-    color: #000; }
+    color: rgba(255, 255, 255, 0.3); }
 
 /*# sourceMappingURL=main.css.map */
