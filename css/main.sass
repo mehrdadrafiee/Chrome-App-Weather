@@ -1,14 +1,14 @@
-@import url(https://fonts.googleapis.com/css?family=Ubuntu:500,700,400)
+@import url(https://fonts.googleapis.com/css?family=Quicksand)
 
-$font-stack: Ubuntu
+$font-stack: 'Quicksand', sans-serif
 $bg-color: rgba(0, 0, 0, 0.1)
-$bg: "../../img/bg.png"
+$bg: "../../img/self.jpg"
 
 html, body
   height: 100%
   font: 100% $font-stack
   color: rgba(255, 255, 255, 0.8)
-  
+
   #mainContainer
     height: 100%
     background:
@@ -20,7 +20,7 @@ html, body
   text-align: center
   margin: 4em auto
   h1
-    font-size: 6em
+    font-size: 10em
     padding: 0
     margin: 0
   h5
@@ -28,12 +28,18 @@ html, body
     font-weight: bold
 
 #forecast ul li
-  font-size: 4.5em
+  font-size: 1em
   text-align: center
+  border: 1px solid rgba(255, 255, 255, 0.2)
+  padding: 2px
+  background:
+    color: rgba(255, 255, 255, 0.3)
   h3
-    font-size: 1.4em
+    font-size: 2em
+    sup
+      font-size: 0.5em
   .today h3
-    font-size: 1.8em
+    font-size: 8em
 
 #actionbar
   position: absolute

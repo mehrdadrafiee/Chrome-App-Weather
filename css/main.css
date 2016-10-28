@@ -1,11 +1,11 @@
-@import url(https://fonts.googleapis.com/css?family=Ubuntu:500,700,400);
+@import url(https://fonts.googleapis.com/css?family=Quicksand);
 html, body {
   height: 100%;
-  font: 100% Ubuntu;
+  font: 100% "Quicksand", sans-serif;
   color: rgba(255, 255, 255, 0.8); }
   html #mainContainer, body #mainContainer {
     height: 100%;
-    background-image: url("../../img/bg.png");
+    background-image: url("../../img/self.jpg");
     background-size: cover;
     background-position: center; }
 
@@ -13,7 +13,7 @@ html, body {
   text-align: center;
   margin: 4em auto; }
   .clock h1 {
-    font-size: 6em;
+    font-size: 10em;
     padding: 0;
     margin: 0; }
   .clock h5 {
@@ -21,12 +21,17 @@ html, body {
     font-weight: bold; }
 
 #forecast ul li {
-  font-size: 4.5em;
-  text-align: center; }
+  font-size: 1em;
+  text-align: center;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  padding: 2px;
+  background-color: rgba(255, 255, 255, 0.3); }
   #forecast ul li h3 {
-    font-size: 1.4em; }
+    font-size: 2em; }
+    #forecast ul li h3 sup {
+      font-size: 0.5em; }
   #forecast ul li .today h3 {
-    font-size: 1.8em; }
+    font-size: 8em; }
 
 #actionbar {
   position: absolute;
